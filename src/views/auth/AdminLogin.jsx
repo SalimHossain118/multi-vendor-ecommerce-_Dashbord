@@ -1,12 +1,18 @@
 /** @format */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import { admin_login } from "../../store/Reducers/authReducer";
+import toast from "react-hot-toast";
+import { PropagateLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
+import { admin_login, messageClear } from "../../store/Reducers/authReducer";
 
 const AdminLogin = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { loader, errorsMessage, successMessage } = useSelector(
+    (state) => state.auth
+  );
   const [state, setState] = useState({
     email: "",
     password: "",
@@ -21,6 +27,26 @@ const AdminLogin = () => {
     dispatch(admin_login(state));
     console.log(state);
   };
+
+  const overrideStyle = {
+    display: "flex",
+    margin: "0 auto",
+    height: "24px",
+    justifyContent: "center",
+    alignItems: "center",
+  };
+
+  useEffect(() => {
+    if (errorsMessage) {
+      toast.error(errorsMessage);
+      dispatch(messageClear());
+    }
+    if (successMessage) {
+      toast.success(successMessage);
+      dispatch(messageClear());
+      navigate("/");
+    }
+  }, [errorsMessage, successMessage]);
 
   return (
     <div className="min-w-screen min-h-screen bg-[#161d31] flex justify-center items-center">
@@ -65,8 +91,14 @@ const AdminLogin = () => {
             </div>
             {/* end of input fields */}
 
-            <button className="bg-blue-500 w-full hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-5 mt-5">
-              Login
+            <button
+              disabled={loader ? true : false}
+              className="bg-blue-500 w-full hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-5 mt-5">
+              {loader ? (
+                <PropagateLoader cssOverride={overrideStyle} />
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
         </div>

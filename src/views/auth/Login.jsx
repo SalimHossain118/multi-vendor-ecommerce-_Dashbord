@@ -5,8 +5,11 @@ import { Link } from "react-router-dom";
 import { AiOutlineGooglePlus, AiOutlineGithub } from "react-icons/ai";
 import { FiFacebook } from "react-icons/fi";
 import { CiTwitter } from "react-icons/ci";
+import { useDispatch, useSelector } from "react-redux";
+import { admin_login } from "../../store/Reducers/authReducer";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const [state, setState] = useState({
     email: "",
     password: "",
@@ -19,6 +22,7 @@ const Login = () => {
   const submit = (e) => {
     e.preventDefault();
     console.log(state);
+    dispatch(admin_login(state));
   };
 
   return (
